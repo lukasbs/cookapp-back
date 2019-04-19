@@ -37,16 +37,16 @@ public class TokenAuthenticationFilter extends GenericFilterBean {
         final String accessToken = httpRequest.getHeader(HttpHeaders.AUTHORIZATION);
 
         //Every user should have access to /login or /register endpoint
-        if(httpRequest.getRequestURI().contains(Constraints.AUTH_URL))
+        if(httpRequest.getRequestURI().contains(Constants.AUTH_URL))
             filterChain.doFilter(servletRequest, servletResponse);
         //If token is provided, try parsing it
         else if (accessToken != null) {
             try{
                 Jws<Claims> claims = Jwts.parser()
-                        .setSigningKey(TextCodec.BASE64.decode(environment.getProperty(Constraints.SECRET_KEY_PROPERTY)))
+                        .setSigningKey(TextCodec.BASE64.decode(environment.getProperty(Constants.SECRET_KEY_PROPERTY)))
                         .parseClaimsJws(accessToken);
-                String name = (String)claims.getBody().get(Constraints.FIELD_NAME);
-                String password = (String)claims.getBody().get(Constraints.FIELD_PASSWORD);
+                String name = (String)claims.getBody().get(Constants.FIELD_NAME);
+                String password = (String)claims.getBody().get(Constants.FIELD_PASSWORD);
                 //Find user in database if provided token contains name and password
                 if(name != null && password != null){
                     this.user = this.userRepository.findByNameAndPassword(name, password);
@@ -56,9 +56,9 @@ public class TokenAuthenticationFilter extends GenericFilterBean {
                 //If user was found in database
                 if(this.user != null) {
                     //If user requests access to admin resources
-                    if(httpRequest.getRequestURI().contains(Constraints.ADMIN_URL)) {
+                    if(httpRequest.getRequestURI().contains(Constants.ADMIN_URL)) {
                         //Allow access if user role is ADMIN
-                        if(this.user.getRole().equals(Constraints.ROLE_ADMIN)){
+                        if(this.user.getRole().equals(Constants.ROLE_ADMIN)){
                             filterChain.doFilter(servletRequest, servletResponse);
                         //Unauthorized if user role is USER
                         } else

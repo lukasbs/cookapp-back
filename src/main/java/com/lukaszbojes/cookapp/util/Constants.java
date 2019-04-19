@@ -1,6 +1,6 @@
 package com.lukaszbojes.cookapp.util;
 
-public class Constraints {
+public final class Constants {
 
     public static final String API_URL = "/api";
     public static final String ADMIN_URL = "/admin";

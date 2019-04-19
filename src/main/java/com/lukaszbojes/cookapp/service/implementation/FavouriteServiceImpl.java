@@ -9,7 +9,7 @@ import com.lukaszbojes.cookapp.data.repository.FavouriteRepository;
 import com.lukaszbojes.cookapp.data.repository.RecipeRepository;
 import com.lukaszbojes.cookapp.data.repository.UserRepository;
 import com.lukaszbojes.cookapp.service.FavouriteService;
-import com.lukaszbojes.cookapp.util.Constraints;
+import com.lukaszbojes.cookapp.util.Constants;
 import com.lukaszbojes.cookapp.util.Utils;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
@@ -53,7 +53,7 @@ public class FavouriteServiceImpl implements FavouriteService {
         List<RecipeDto> favouriteRecipeDtos = Utils.mapRecipeEntitiesToDtos(favouriteRecipes, this.modelMapper);
 
         return favouriteRecipeDtos.size() > 0 ? new ResponseEntity<>(favouriteRecipeDtos, HttpStatus.OK) :
-                new ResponseEntity<>(new MessageDto(Constraints.RECIPE_GET_ALL_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
+                new ResponseEntity<>(new MessageDto(Constants.RECIPE_GET_ALL_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
     }
 
     @Override
@@ -62,13 +62,13 @@ public class FavouriteServiceImpl implements FavouriteService {
         Recipe recipe = this.recipeRepository.findByName(name);
         if(user != null || recipe != null){
             if(this.favouriteRepository.findByUserAndRecipe(user,recipe) != null){
-                return new ResponseEntity<>(new MessageDto(Constraints.FAVOURITE_ADD_ERROR_ALREADY_ADDED_MESSAGE), HttpStatus.CONFLICT);
+                return new ResponseEntity<>(new MessageDto(Constants.FAVOURITE_ADD_ERROR_ALREADY_ADDED_MESSAGE), HttpStatus.CONFLICT);
             } else{
                 this.favouriteRepository.save(new Favourite(user, recipe));
-                return new ResponseEntity<>(new MessageDto(Constraints.FAVOURITE_ADD_SUCCESS_MESSAGE), HttpStatus.OK);
+                return new ResponseEntity<>(new MessageDto(Constants.FAVOURITE_ADD_SUCCESS_MESSAGE), HttpStatus.OK);
             }
         } else {
-            return new ResponseEntity<>(new MessageDto(Constraints.FAVOURITE_ADD_ERROR_NOT_FOUND_MESSAGE), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageDto(Constants.FAVOURITE_ADD_ERROR_NOT_FOUND_MESSAGE), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -78,9 +78,9 @@ public class FavouriteServiceImpl implements FavouriteService {
         Recipe recipe = this.recipeRepository.findByName(name);
         if(user != null || recipe != null){
             this.favouriteRepository.deleteByUserAndRecipe(user, recipe);
-            return new ResponseEntity<>(new MessageDto(Constraints.FAVOURITE_DELETE_SUCCESS_MESSAGE), HttpStatus.OK);
+            return new ResponseEntity<>(new MessageDto(Constants.FAVOURITE_DELETE_SUCCESS_MESSAGE), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new MessageDto(Constraints.FAVOURITE_DELETE_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageDto(Constants.FAVOURITE_DELETE_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
         }
     }
 }

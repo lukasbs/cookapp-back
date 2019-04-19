@@ -7,7 +7,7 @@ import com.lukaszbojes.cookapp.data.entity.Recipe;
 import com.lukaszbojes.cookapp.data.repository.IngredientRepository;
 import com.lukaszbojes.cookapp.data.repository.RecipeRepository;
 import com.lukaszbojes.cookapp.service.RecipeService;
-import com.lukaszbojes.cookapp.util.Constraints;
+import com.lukaszbojes.cookapp.util.Constants;
 import com.lukaszbojes.cookapp.util.Utils;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -34,7 +34,7 @@ public class RecipeServiceImpl implements RecipeService {
     public ResponseEntity<Object> getAllRecipes() {
         ArrayList<RecipeDto> recipeDtos = Utils.mapRecipeEntitiesToDtos(this.recipeRepository.findAll(), this.modelMapper);
         return recipeDtos.size() > 0 ? new ResponseEntity<>(recipeDtos, HttpStatus.OK) :
-                new ResponseEntity<>(new MessageDto(Constraints.RECIPE_GET_ALL_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
+                new ResponseEntity<>(new MessageDto(Constants.RECIPE_GET_ALL_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
     }
 
     @Override
@@ -45,9 +45,9 @@ public class RecipeServiceImpl implements RecipeService {
 
             resultRecipes = getRecipes(words);
             return resultRecipes.size() > 0 ? new ResponseEntity<>(Utils.mapRecipeEntitiesToDtos(resultRecipes, this.modelMapper), HttpStatus.OK) :
-                    new ResponseEntity<>(new MessageDto(Constraints.RECIPE_GET_INGREDIENT_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
+                    new ResponseEntity<>(new MessageDto(Constants.RECIPE_GET_INGREDIENT_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<>(new MessageDto(Constraints.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageDto(Constants.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -56,13 +56,13 @@ public class RecipeServiceImpl implements RecipeService {
     public ResponseEntity<Object> getAllRecipesByName(String name) {
         ArrayList<RecipeDto> recipeDtos = Utils.mapRecipeEntitiesToDtos(this.recipeRepository.findAllByNameStartingWith(name), this.modelMapper);
         return recipeDtos.size() > 0 ? new ResponseEntity<>(recipeDtos, HttpStatus.OK) :
-                new ResponseEntity<>(new MessageDto(Constraints.RECIPE_GET_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
+                new ResponseEntity<>(new MessageDto(Constants.RECIPE_GET_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
     }
 
     @Override
     public ResponseEntity<Object> addRecipe(RecipeDto recipeDto) {
         if(this.recipeRepository.findByName(recipeDto.getName()) != null) {
-            return new ResponseEntity<>(new MessageDto(Constraints.RECIPE_ADD_ERROR_ALREADY_ADDED_MESSAGE), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageDto(Constants.RECIPE_ADD_ERROR_ALREADY_ADDED_MESSAGE), HttpStatus.BAD_REQUEST);
         }
         if(recipeDto.getName() != null && recipeDto.getDescription() != null && recipeDto.getIngredients() != null){
             Recipe recipe = this.modelMapper.map(recipeDto, Recipe.class);
@@ -70,9 +70,9 @@ public class RecipeServiceImpl implements RecipeService {
                 ingredient.setRecipe(recipe);
             }
             this.recipeRepository.save(recipe);
-            return new ResponseEntity<>(new MessageDto(Constraints.RECIPE_ADD_SUCCESS_MESSAGE), HttpStatus.CREATED);
+            return new ResponseEntity<>(new MessageDto(Constants.RECIPE_ADD_SUCCESS_MESSAGE), HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<>(new MessageDto(Constraints.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageDto(Constants.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -88,10 +88,10 @@ public class RecipeServiceImpl implements RecipeService {
 
             this.recipeRepository.save(recipe);
 
-            return new ResponseEntity<>(new MessageDto(Constraints.RECIPE_UPDATE_SUCCESS_MESSAGE), HttpStatus.OK);
+            return new ResponseEntity<>(new MessageDto(Constants.RECIPE_UPDATE_SUCCESS_MESSAGE), HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(new MessageDto(Constraints.RECIPE_UPDATE_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new MessageDto(Constants.RECIPE_UPDATE_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
     }
 
     @Override
@@ -99,15 +99,15 @@ public class RecipeServiceImpl implements RecipeService {
     public ResponseEntity<Object> deleteRecipe(String name) {
         if(this.recipeRepository.findByName(name) != null) {
             this.recipeRepository.deleteByName(name);
-            return new ResponseEntity<>(new MessageDto(Constraints.RECIPE_DELETE_SUCCESS_MESSAGE), HttpStatus.OK);
+            return new ResponseEntity<>(new MessageDto(Constants.RECIPE_DELETE_SUCCESS_MESSAGE), HttpStatus.OK);
         }
-        return new ResponseEntity<>(new MessageDto(Constraints.RECIPE_DELETE_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new MessageDto(Constants.RECIPE_DELETE_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
     }
 
     @Override
     public ResponseEntity<Object> getDailyRecipe() {
         return this.findDaily() != null ? new ResponseEntity<>(findDaily(), HttpStatus.OK) :
-                new ResponseEntity<>(new MessageDto(Constraints.RECIPE_GET_DAILY_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
+                new ResponseEntity<>(new MessageDto(Constants.RECIPE_GET_DAILY_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
     }
 
     //Need refactor
@@ -133,7 +133,7 @@ public class RecipeServiceImpl implements RecipeService {
 //            }
 
             if(words.length > 1) {
-                return new ResponseEntity<>(new MessageDto(Constraints.RECIPE_GET_INGREDIENT_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(new MessageDto(Constants.RECIPE_GET_INGREDIENT_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
 //                for(Recipe recipeN: byNameRecipes){
 //                    for(Recipe recipeI: byIngredientRecipes){
 //                        if(recipeN.getRecipeID() == recipeI.getRecipeID())
@@ -145,13 +145,13 @@ public class RecipeServiceImpl implements RecipeService {
                 if(resultRecipes.size() > 0){
                     return new ResponseEntity<>(Utils.mapRecipeEntitiesToDtos(resultRecipes, this.modelMapper), HttpStatus.OK);
                 } else {
-                    return new ResponseEntity<>(new MessageDto(Constraints.RECIPE_GET_INGREDIENT_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
+                    return new ResponseEntity<>(new MessageDto(Constants.RECIPE_GET_INGREDIENT_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
                 }
             } else {
-                return new ResponseEntity<>(new MessageDto(Constraints.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new MessageDto(Constants.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
             }
         } else {
-            return new ResponseEntity<>(new MessageDto(Constraints.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageDto(Constants.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
         }
 
     }

@@ -6,7 +6,7 @@ import com.lukaszbojes.cookapp.data.entity.FridgeItem;
 import com.lukaszbojes.cookapp.data.repository.FridgeItemRepository;
 import com.lukaszbojes.cookapp.data.repository.UserRepository;
 import com.lukaszbojes.cookapp.service.FridgeItemService;
-import com.lukaszbojes.cookapp.util.Constraints;
+import com.lukaszbojes.cookapp.util.Constants;
 import com.lukaszbojes.cookapp.util.Utils;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
@@ -37,7 +37,7 @@ public class FridgeItemServiceImpl implements FridgeItemService {
         ArrayList<FridgeItemDto> fridgeItemDtos = Utils.mapFridgeItemEntitiesToDtos(
                 this.fridgeItemRepository.findAllByUser(Utils.getUserFromToken(token, this.environment, this.userRepository)), this.modelMapper);
         return fridgeItemDtos.size() > 0 ? new ResponseEntity<>(fridgeItemDtos, HttpStatus.OK) :
-                new ResponseEntity<>(new MessageDto(Constraints.FRIDGE_GET_ALL_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
+                new ResponseEntity<>(new MessageDto(Constants.FRIDGE_GET_ALL_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
     }
 
     @Override
@@ -46,9 +46,9 @@ public class FridgeItemServiceImpl implements FridgeItemService {
             FridgeItem fridgeItem = this.modelMapper.map(fridgeItemDto, FridgeItem.class);
             fridgeItem.setUser(Utils.getUserFromToken(token, this.environment, this.userRepository));
             this.fridgeItemRepository.save(fridgeItem);
-            return new ResponseEntity<>(new MessageDto(Constraints.FRIDGE_ADD_SUCCESS_MESSAGE), HttpStatus.CREATED);
+            return new ResponseEntity<>(new MessageDto(Constants.FRIDGE_ADD_SUCCESS_MESSAGE), HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<>(new MessageDto(Constraints.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageDto(Constants.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -61,8 +61,8 @@ public class FridgeItemServiceImpl implements FridgeItemService {
                 Utils.getUserFromToken(token, this.environment, this.userRepository));
         if(items.size() > 0){
             this.fridgeItemRepository.deleteByFridgeID(items.get(0).getFridgeID());
-            return new ResponseEntity<>(new MessageDto(Constraints.FRIDGE_DELETE_SUCCESS_MESSAGE), HttpStatus.OK);
+            return new ResponseEntity<>(new MessageDto(Constants.FRIDGE_DELETE_SUCCESS_MESSAGE), HttpStatus.OK);
         }
-        return new ResponseEntity<>(new MessageDto(Constraints.FRIDGE_DELETE_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new MessageDto(Constants.FRIDGE_DELETE_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
     }
 }

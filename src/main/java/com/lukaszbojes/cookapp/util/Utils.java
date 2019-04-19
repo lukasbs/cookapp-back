@@ -60,12 +60,12 @@ public class Utils {
         Jws<Claims> claims;
         try{
             claims = Jwts.parser()
-                    .setSigningKey(TextCodec.BASE64.decode(environment.getProperty(Constraints.SECRET_KEY_PROPERTY)))
+                    .setSigningKey(TextCodec.BASE64.decode(environment.getProperty(Constants.SECRET_KEY_PROPERTY)))
                     .parseClaimsJws(accessToken);
         } catch (Exception e) {
             System.out.println("Exception while parsing token: " + e);
             return null;
         }
-        return userRepository.findByName((String)claims.getBody().get(Constraints.FIELD_NAME));
+        return userRepository.findByName((String)claims.getBody().get(Constants.FIELD_NAME));
     }
 }

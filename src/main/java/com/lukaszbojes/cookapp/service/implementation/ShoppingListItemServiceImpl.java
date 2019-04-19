@@ -6,7 +6,7 @@ import com.lukaszbojes.cookapp.data.entity.ShoppingListItem;
 import com.lukaszbojes.cookapp.data.repository.ShoppingListItemRepository;
 import com.lukaszbojes.cookapp.data.repository.UserRepository;
 import com.lukaszbojes.cookapp.service.ShoppingListItemService;
-import com.lukaszbojes.cookapp.util.Constraints;
+import com.lukaszbojes.cookapp.util.Constants;
 import com.lukaszbojes.cookapp.util.Utils;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
@@ -40,7 +40,7 @@ public class ShoppingListItemServiceImpl implements ShoppingListItemService {
         ArrayList<ShoppingListItemDto> shoppingListItemDtos = Utils.mapShoppingListItemEntitiesToDtos(
                 this.shoppingListItemRepository.findAllByUser(Utils.getUserFromToken(token, this.environment, this.userRepository)), this.modelMapper);
         return shoppingListItemDtos.size() > 0 ? new ResponseEntity<>(shoppingListItemDtos, HttpStatus.OK) :
-                new ResponseEntity<>(new MessageDto(Constraints.SHOPPING_GET_ALL_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
+                new ResponseEntity<>(new MessageDto(Constants.SHOPPING_GET_ALL_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
     }
 
     @Override
@@ -49,9 +49,9 @@ public class ShoppingListItemServiceImpl implements ShoppingListItemService {
             ShoppingListItem shoppingListItem = this.modelMapper.map(shoppingListItemDto, ShoppingListItem.class);
             shoppingListItem.setUser(Utils.getUserFromToken(token, this.environment, this.userRepository));
             this.shoppingListItemRepository.save(shoppingListItem);
-            return new ResponseEntity<>(new MessageDto(Constraints.SHOPPING_ADD_SUCCESS_MESSAGE), HttpStatus.CREATED);
+            return new ResponseEntity<>(new MessageDto(Constants.SHOPPING_ADD_SUCCESS_MESSAGE), HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<>(new MessageDto(Constraints.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageDto(Constants.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -63,9 +63,9 @@ public class ShoppingListItemServiceImpl implements ShoppingListItemService {
                 Utils.getUserFromToken(token, this.environment, this.userRepository));
         if(items.size() > 0){
             this.shoppingListItemRepository.deleteByShoppingListID(items.get(0).getShoppingListID());
-            return new ResponseEntity<>(new MessageDto(Constraints.SHOPPING_DELETE_SUCCESS_MESSAGE), HttpStatus.OK);
+            return new ResponseEntity<>(new MessageDto(Constants.SHOPPING_DELETE_SUCCESS_MESSAGE), HttpStatus.OK);
         }
-        return new ResponseEntity<>(new MessageDto(Constraints.SHOPPING_DELETE_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new MessageDto(Constants.SHOPPING_DELETE_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
     }
 
     @Override
@@ -79,12 +79,12 @@ public class ShoppingListItemServiceImpl implements ShoppingListItemService {
 
                 this.shoppingListItemRepository.save(items.get(0));
 
-                return new ResponseEntity<>(new MessageDto(Constraints.SHOPPING_UPDATE_SUCCESS_MESSAGE), HttpStatus.OK);
+                return new ResponseEntity<>(new MessageDto(Constants.SHOPPING_UPDATE_SUCCESS_MESSAGE), HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(new MessageDto(Constraints.SHOPPING_UPDATE_ERROR_MESSAGE), HttpStatus.CONFLICT);
+                return new ResponseEntity<>(new MessageDto(Constants.SHOPPING_UPDATE_ERROR_MESSAGE), HttpStatus.CONFLICT);
             }
         } else {
-            return new ResponseEntity<>(new MessageDto(Constraints.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageDto(Constants.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
         }
     }
 }

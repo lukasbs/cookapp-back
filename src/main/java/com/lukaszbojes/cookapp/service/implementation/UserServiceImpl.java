@@ -7,7 +7,7 @@ import com.lukaszbojes.cookapp.data.repository.FridgeItemRepository;
 import com.lukaszbojes.cookapp.data.repository.ShoppingListItemRepository;
 import com.lukaszbojes.cookapp.data.repository.UserRepository;
 import com.lukaszbojes.cookapp.service.UserService;
-import com.lukaszbojes.cookapp.util.Constraints;
+import com.lukaszbojes.cookapp.util.Constants;
 import com.lukaszbojes.cookapp.util.Utils;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -47,13 +47,13 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<Object> registerUser(UserDto userDto) {
         if(userDto.getName() != null && userDto.getPassword() != null) {
             if(userRepository.findByName(userDto.getName()) != null){
-                return new ResponseEntity<>(new MessageDto(Constraints.ALREADY_REGISTERED_MESSAGE), HttpStatus.CONFLICT);
+                return new ResponseEntity<>(new MessageDto(Constants.ALREADY_REGISTERED_MESSAGE), HttpStatus.CONFLICT);
             } else {
-                userRepository.save(new User(userDto.getName(), userDto.getPassword(), Constraints.ROLE_USER));
-                return new ResponseEntity<>(new MessageDto(Constraints.REGISTERED_SUCCESS_MESSAGE), HttpStatus.CREATED);
+                userRepository.save(new User(userDto.getName(), userDto.getPassword(), Constants.ROLE_USER));
+                return new ResponseEntity<>(new MessageDto(Constants.REGISTERED_SUCCESS_MESSAGE), HttpStatus.CREATED);
             }
         } else {
-            return new ResponseEntity<>(new MessageDto(Constraints.EMPTY_CREDENTIALS_MESSAGE), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageDto(Constants.EMPTY_CREDENTIALS_MESSAGE), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -72,10 +72,10 @@ public class UserServiceImpl implements UserService {
                         HttpStatus.OK
                 );
             } else {
-                return new ResponseEntity<>(new MessageDto(Constraints.LOGIN_FAILED_MESSAGE), HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(new MessageDto(Constants.LOGIN_FAILED_MESSAGE), HttpStatus.FORBIDDEN);
             }
         } else {
-            return new ResponseEntity<>(new MessageDto(Constraints.EMPTY_CREDENTIALS_MESSAGE), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageDto(Constants.EMPTY_CREDENTIALS_MESSAGE), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<Object> loginAdminUser(UserDto userDto) {
         if(userDto.getName() != null && userDto.getPassword() != null) {
             User user = userRepository.findByNameAndPassword(userDto.getName(), userDto.getPassword());
-            if(user != null && user.getRole().equals(Constraints.ROLE_ADMIN)){
+            if(user != null && user.getRole().equals(Constants.ROLE_ADMIN)){
                 return new ResponseEntity<>(
                         new LoginDto(
                                 getToken(userDto.getName(), userDto.getPassword()),
@@ -94,10 +94,10 @@ public class UserServiceImpl implements UserService {
                         HttpStatus.OK
                 );
             } else {
-                return new ResponseEntity<>(new MessageDto(Constraints.LOGIN_FAILED_MESSAGE), HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(new MessageDto(Constants.LOGIN_FAILED_MESSAGE), HttpStatus.FORBIDDEN);
             }
         } else {
-            return new ResponseEntity<>(new MessageDto(Constraints.EMPTY_CREDENTIALS_MESSAGE), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageDto(Constants.EMPTY_CREDENTIALS_MESSAGE), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<Object> getAllUsers() {
         ArrayList<UserDto> userDtos = Utils.mapUserEntitiesToDtos(this.userRepository.findAll(), this.modelMapper);
         return userDtos.size() > 0 ? new ResponseEntity<>(userDtos, HttpStatus.OK) :
-                new ResponseEntity<>(new MessageDto(Constraints.USER_GET_ALL_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
+                new ResponseEntity<>(new MessageDto(Constants.USER_GET_ALL_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
         if(this.userRepository.findByName(name) != null) {
             return new ResponseEntity<>(this.userRepository.findByName(name), HttpStatus.OK);
         }
-        return new ResponseEntity<>(new MessageDto(Constraints.USER_GET_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new MessageDto(Constants.USER_GET_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
     }
 
     @Override
@@ -121,9 +121,9 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<Object> deleteUser(String name) {
         if(this.userRepository.findByName(name) != null) {
             this.userRepository.deleteByName(name);
-            return new ResponseEntity<>(new MessageDto(Constraints.USER_DELETE_SUCCESS_MESSAGE), HttpStatus.OK);
+            return new ResponseEntity<>(new MessageDto(Constants.USER_DELETE_SUCCESS_MESSAGE), HttpStatus.OK);
         }
-        return new ResponseEntity<>(new MessageDto(Constraints.USER_DELETE_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new MessageDto(Constants.USER_DELETE_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
     }
 
     @Override
@@ -136,21 +136,21 @@ public class UserServiceImpl implements UserService {
 
             this.userRepository.save(user);
 
-            return new ResponseEntity<>(new MessageDto(Constraints.USER_UPDATE_SUCCESS_MESSAGE), HttpStatus.OK);
+            return new ResponseEntity<>(new MessageDto(Constants.USER_UPDATE_SUCCESS_MESSAGE), HttpStatus.OK);
         }
-        return new ResponseEntity<>(new MessageDto(Constraints.USER_UPDATE_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new MessageDto(Constants.USER_UPDATE_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
     }
 
     @Override
     public ResponseEntity<Object> addUser(UserDto userDto) {
         if(this.userRepository.findByName(userDto.getName()) != null) {
-            return new ResponseEntity<>(new MessageDto(Constraints.USER_ADD_ERROR_ALREADY_ADDED_MESSAGE), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new MessageDto(Constants.USER_ADD_ERROR_ALREADY_ADDED_MESSAGE), HttpStatus.CONFLICT);
         }
         if(userDto.getName() != null && userDto.getPassword() != null && userDto.getRole() != null){
             this.userRepository.save(this.modelMapper.map(userDto, User.class));
-            return new ResponseEntity<>(new MessageDto(Constraints.USER_ADD_SUCCESS_MESSAGE), HttpStatus.CREATED);
+            return new ResponseEntity<>(new MessageDto(Constants.USER_ADD_SUCCESS_MESSAGE), HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<>(new MessageDto(Constraints.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageDto(Constants.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -176,11 +176,11 @@ public class UserServiceImpl implements UserService {
 
     private String getToken(String name, String password) {
         return Jwts.builder()
-                .claim(Constraints.FIELD_NAME, name)
-                .claim(Constraints.FIELD_PASSWORD, password)
+                .claim(Constants.FIELD_NAME, name)
+                .claim(Constants.FIELD_PASSWORD, password)
                 .signWith(
                         SignatureAlgorithm.HS256,
-                        TextCodec.BASE64.decode(environment.getProperty(Constraints.SECRET_KEY_PROPERTY))
+                        TextCodec.BASE64.decode(environment.getProperty(Constants.SECRET_KEY_PROPERTY))
                 )
                 .compact();
     }
