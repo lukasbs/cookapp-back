@@ -108,12 +108,19 @@ public class UserServiceImpl implements UserService {
                 new ResponseEntity<>(new MessageDto(Constants.USER_GET_ALL_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
     }
 
+//    @Override
+//    public ResponseEntity<Object> getUserByName(String name) {
+//        if(this.userRepository.findByName(name) != null) {
+//            return new ResponseEntity<>(this.userRepository.findByName(name), HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>(new MessageDto(Constants.USER_GET_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
+//    }
+
     @Override
     public ResponseEntity<Object> getUserByName(String name) {
-        if(this.userRepository.findByName(name) != null) {
-            return new ResponseEntity<>(this.userRepository.findByName(name), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(new MessageDto(Constants.USER_GET_ERROR_MESSAGE), HttpStatus.BAD_REQUEST);
+        ArrayList<UserDto> userDtos = Utils.mapUserEntitiesToDtos(this.userRepository.findAllByNameStartingWith(name), this.modelMapper);
+        return userDtos.size() > 0 ? new ResponseEntity<>(userDtos, HttpStatus.OK) :
+                new ResponseEntity<>(new MessageDto(Constants.USER_GET_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
     }
 
     @Override

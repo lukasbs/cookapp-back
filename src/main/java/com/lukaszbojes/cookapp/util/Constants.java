@@ -83,4 +83,5 @@ public final class Constants {
     public static final String SECRET_KEY_PROPERTY = "auth.secret.key";
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String ERROR_MISSING_FIELDS_MESSAGE = "Missing fields in provided request!";
+    public static final String OPTIONS = "OPTIONS";
 }

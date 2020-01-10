@@ -10,15 +10,17 @@ public class RecipeDto {
 
     private String name;
     private String description;
+    private String image;
 
     private List<IngredientDto> ingredients;
 
     public RecipeDto() {
     }
 
-    public RecipeDto(String name, String description, List<IngredientDto> ingredients) {
+    public RecipeDto(String name, String description, String image, List<IngredientDto> ingredients) {
         this.name = name;
         this.description = description;
         this.ingredients = ingredients;
+        this.image = image;
     }
 }

@@ -15,6 +15,10 @@ public class Recipe {
     private long recipeID;
 
     private String name;
+    private String image;
+
+    @Lob
+    @Column( length = 1000000 )
     private String description;
 
     @OneToMany(cascade = CascadeType.ALL , mappedBy = "recipe")
@@ -36,14 +40,16 @@ public class Recipe {
     public Recipe() {
     }
 
-    public Recipe(String name, String description) {
+    public Recipe(String name, String description, String image) {
         this.name = name;
         this.description = description;
+        this.image = image;
     }
 
-    public Recipe(String name, String description, List<Ingredient> ingredients) {
+    public Recipe(String name, String description, String image, List<Ingredient> ingredients) {
         this.name = name;
         this.description = description;
         this.ingredients = ingredients;
+        this.image = image;
     }
 }

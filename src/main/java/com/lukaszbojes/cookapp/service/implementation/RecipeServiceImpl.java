@@ -62,9 +62,9 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public ResponseEntity<Object> addRecipe(RecipeDto recipeDto) {
         if(this.recipeRepository.findByName(recipeDto.getName()) != null) {
-            return new ResponseEntity<>(new MessageDto(Constants.RECIPE_ADD_ERROR_ALREADY_ADDED_MESSAGE), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new MessageDto(Constants.RECIPE_ADD_ERROR_ALREADY_ADDED_MESSAGE), HttpStatus.CONFLICT);
         }
-        if(recipeDto.getName() != null && recipeDto.getDescription() != null && recipeDto.getIngredients() != null){
+        if(recipeDto.getName() != null && recipeDto.getDescription() != null && recipeDto.getIngredients() != null && recipeDto.getImage() != null){
             Recipe recipe = this.modelMapper.map(recipeDto, Recipe.class);
             for(Ingredient ingredient: recipe.getIngredients()){
                 ingredient.setRecipe(recipe);
@@ -84,6 +84,7 @@ public class RecipeServiceImpl implements RecipeService {
             this.ingredientRepository.deleteByRecipe(recipe);
             recipe.setName(recipeDto.getName());
             recipe.setDescription(recipeDto.getDescription());
+            recipe.setImage(recipeDto.getImage());
             recipe.setIngredients(Utils.mapIngredientDtosToEntities(recipeDto.getIngredients(), this.modelMapper, recipe));
 
             this.recipeRepository.save(recipe);

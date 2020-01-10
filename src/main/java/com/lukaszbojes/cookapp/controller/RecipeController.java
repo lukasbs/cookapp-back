@@ -33,7 +33,7 @@ public class RecipeController {
     }
 
     @GetMapping(path = Constants.GET_DAILY_URL , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getAllRecipesByName() {
+    public ResponseEntity<Object> getDailyRecipe() {
         return recipeService.getDailyRecipe();
     }
 
