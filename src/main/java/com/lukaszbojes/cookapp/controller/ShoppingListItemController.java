@@ -19,19 +19,19 @@ public class ShoppingListItemController {
     }
 
     @GetMapping(path = Constants.ALL_URL , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getAllShoppingListItems(@RequestHeader(Constants.AUTHORIZATION_HEADER) String token) {
+    public ResponseEntity<Object> getAllShoppingListItems(@CookieValue(Constants.TOKEN_COOKIE_NAME) String token) {
         return shoppingListItemService.getAllShoppingListItems(token);
     }
 
     @PostMapping(path = Constants.ADD_URL , produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> addShoppingListItem(@RequestBody ShoppingListItemDto shoppingListItemDto,
-                                                @RequestHeader(Constants.AUTHORIZATION_HEADER) String token) {
+                                                      @CookieValue(Constants.TOKEN_COOKIE_NAME) String token) {
         return shoppingListItemService.addShoppingListItem(shoppingListItemDto, token);
     }
 
     @DeleteMapping(path = Constants.DELETE_URL , produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> deleteShoppingListItem(@RequestBody ShoppingListItemDto shoppingListItemDto,
-                                                         @RequestHeader(Constants.AUTHORIZATION_HEADER) String token) {
+                                                         @CookieValue(Constants.TOKEN_COOKIE_NAME) String token) {
         return shoppingListItemService.deleteShoppingListItem(shoppingListItemDto, token);
     }
 
@@ -39,7 +39,7 @@ public class ShoppingListItemController {
     public ResponseEntity<Object> updateShoppingListItem(@PathVariable String name,
                                                          @PathVariable String amount,
                                                          @RequestBody ShoppingListItemDto shoppingListItemDto,
-                                                         @RequestHeader(Constants.AUTHORIZATION_HEADER) String token) {
+                                                         @CookieValue(Constants.TOKEN_COOKIE_NAME) String token) {
         return shoppingListItemService.updateShoppingListItem(name, amount, shoppingListItemDto, token);
     }
 

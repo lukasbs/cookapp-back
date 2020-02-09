@@ -17,17 +17,17 @@ public class FavouriteController {
     }
 
     @GetMapping(path = Constants.ALL_URL , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getAllFavourites(@RequestHeader(Constants.AUTHORIZATION_HEADER) String token) {
+    public ResponseEntity<Object> getAllFavourites(@CookieValue(Constants.TOKEN_COOKIE_NAME) String token) {
         return favouriteService.getAllFavourites(token);
     }
 
     @PostMapping(path = Constants.ADD_NAME_URL , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> addFavourite(@PathVariable String name, @RequestHeader(Constants.AUTHORIZATION_HEADER) String token) {
+    public ResponseEntity<Object> addFavourite(@PathVariable String name, @CookieValue(Constants.TOKEN_COOKIE_NAME) String token) {
         return favouriteService.addFavourite(name, token);
     }
 
     @DeleteMapping(path = Constants.DELETE_NAME_URL , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> deleteFavourite(@PathVariable String name, @RequestHeader(Constants.AUTHORIZATION_HEADER) String token) {
+    public ResponseEntity<Object> deleteFavourite(@PathVariable String name, @CookieValue(Constants.TOKEN_COOKIE_NAME) String token) {
         return favouriteService.deleteFavourite(name, token);
     }
 }

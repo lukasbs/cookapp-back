@@ -1,8 +1,11 @@
 package com.lukaszbojes.cookapp.util;
 
+import com.lukaszbojes.cookapp.service.UserService;
+import com.lukaszbojes.cookapp.service.implementation.UserServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;

@@ -9,17 +9,23 @@ import com.lukaszbojes.cookapp.data.repository.UserRepository;
 import com.lukaszbojes.cookapp.service.UserService;
 import com.lukaszbojes.cookapp.util.Constants;
 import com.lukaszbojes.cookapp.util.Utils;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -49,7 +55,8 @@ public class UserServiceImpl implements UserService {
             if(userRepository.findByName(userDto.getName()) != null){
                 return new ResponseEntity<>(new MessageDto(Constants.ALREADY_REGISTERED_MESSAGE), HttpStatus.CONFLICT);
             } else {
-                userRepository.save(new User(userDto.getName(), userDto.getPassword(), Constants.ROLE_USER));
+                String sha256hex = DigestUtils.sha256Hex(userDto.getPassword());
+                userRepository.save(new User(userDto.getName(), sha256hex, Constants.ROLE_USER));
                 return new ResponseEntity<>(new MessageDto(Constants.REGISTERED_SUCCESS_MESSAGE), HttpStatus.CREATED);
             }
         } else {
@@ -60,15 +67,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<Object> loginUser(UserDto userDto) {
         if(userDto.getName() != null && userDto.getPassword() != null) {
-            if(userRepository.findByNameAndPassword(userDto.getName(), userDto.getPassword()) != null){
+            String sha256hex = DigestUtils.sha256Hex(userDto.getPassword());
+            if(userRepository.findByNameAndPassword(userDto.getName(), sha256hex) != null){
+                HttpHeaders httpHeaders = this.getCookieHeaders(userDto);
                 return new ResponseEntity<>(
                         new LoginDto(
-                                getToken(userDto.getName(), userDto.getPassword()),
+                                getToken(userDto.getName()),
                                 getFavouriteRecipes(userDto.getName()),
                                 getFridgeItems(userDto.getName()),
                                 getShoppingListItems(userDto.getName())
 
                         ),
+                        httpHeaders,
                         HttpStatus.OK
                 );
             } else {
@@ -82,15 +92,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<Object> loginAdminUser(UserDto userDto) {
         if(userDto.getName() != null && userDto.getPassword() != null) {
-            User user = userRepository.findByNameAndPassword(userDto.getName(), userDto.getPassword());
+            String sha256hex = DigestUtils.sha256Hex(userDto.getPassword());
+            User user = userRepository.findByNameAndPassword(userDto.getName(), sha256hex);
             if(user != null && user.getRole().equals(Constants.ROLE_ADMIN)){
+                HttpHeaders httpHeaders = this.getCookieHeaders(userDto);
                 return new ResponseEntity<>(
                         new LoginDto(
-                                getToken(userDto.getName(), userDto.getPassword()),
+                                getToken(userDto.getName()),
                                 getFavouriteRecipes(userDto.getName()),
                                 getFridgeItems(userDto.getName()),
                                 getShoppingListItems(userDto.getName())
                         ),
+                        httpHeaders,
                         HttpStatus.OK
                 );
             } else {
@@ -138,7 +151,7 @@ public class UserServiceImpl implements UserService {
         User user = this.userRepository.findByName(name);
         if(user != null) {
             user.setName(userDto.getName());
-            user.setPassword(userDto.getPassword());
+            user.setPassword(DigestUtils.sha256Hex(userDto.getPassword()));
             user.setRole(userDto.getRole());
 
             this.userRepository.save(user);
@@ -154,12 +167,35 @@ public class UserServiceImpl implements UserService {
             return new ResponseEntity<>(new MessageDto(Constants.USER_ADD_ERROR_ALREADY_ADDED_MESSAGE), HttpStatus.CONFLICT);
         }
         if(userDto.getName() != null && userDto.getPassword() != null && userDto.getRole() != null){
+            String sha256hex = DigestUtils.sha256Hex(userDto.getPassword());
+            userDto.setPassword(sha256hex);
             this.userRepository.save(this.modelMapper.map(userDto, User.class));
             return new ResponseEntity<>(new MessageDto(Constants.USER_ADD_SUCCESS_MESSAGE), HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(new MessageDto(Constants.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @Override
+    public ResponseEntity<Object> isValid(String token) {
+        Jws<Claims> claims = Jwts.parser()
+            .setSigningKey(TextCodec.BASE64.decode(environment.getProperty(Constants.SECRET_KEY_PROPERTY)))
+            .parseClaimsJws(token);
+        String name = (String)claims.getBody().get(Constants.FIELD_NAME);
+
+        User user = this.userRepository.findByName(name);
+
+        return user != null ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Override
+    public ResponseEntity<Object> logout() {
+        return new ResponseEntity<>(
+                new MessageDto(Constants.USER_LOGOUT_MESSAGE),
+                this.clearCookieHeader(),
+                HttpStatus.OK
+        );
     }
 
     private List<RecipeDto> getFavouriteRecipes(String userName) {
@@ -181,14 +217,32 @@ public class UserServiceImpl implements UserService {
         return Utils.mapShoppingListItemEntitiesToDtos(this.shoppingListItemRepository.findAllByUser_Name(userName), this.modelMapper);
     }
 
-    private String getToken(String name, String password) {
+    private String getToken(String name) {
         return Jwts.builder()
                 .claim(Constants.FIELD_NAME, name)
-                .claim(Constants.FIELD_PASSWORD, password)
+                .setExpiration(new Date(new Date().getTime() + 3600000))
                 .signWith(
                         SignatureAlgorithm.HS256,
                         TextCodec.BASE64.decode(environment.getProperty(Constants.SECRET_KEY_PROPERTY))
                 )
                 .compact();
+    }
+
+    private HttpHeaders getCookieHeaders(UserDto userDto) {
+        Date expirationDate = Date.from(ZonedDateTime.now().toInstant());
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.SET_COOKIE, Constants.TOKEN_COOKIE_NAME_SETUP_PREFIX +
+                getToken(userDto.getName()) + Constants.TOKEN_COOKIE_NAME_SETUP_SUFIX + expirationDate.toString());
+        return httpHeaders;
+    }
+
+    private HttpHeaders clearCookieHeader() {
+        Date expirationDate = Date.from(ZonedDateTime.now().minusDays(1).toInstant());
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.SET_COOKIE, Constants.TOKEN_COOKIE_NAME_SETUP_PREFIX +
+                Constants.TOKEN_COOKIE_NAME_SETUP_SUFIX + expirationDate.toString());
+        return httpHeaders;
     }
 }

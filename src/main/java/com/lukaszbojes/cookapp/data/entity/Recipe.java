@@ -16,6 +16,7 @@ public class Recipe {
 
     private String name;
     private String image;
+    private String source;
 
     @Lob
     @Column( length = 1000000 )
@@ -40,16 +41,18 @@ public class Recipe {
     public Recipe() {
     }
 
-    public Recipe(String name, String description, String image) {
+    public Recipe(String name, String description, String image, String source) {
         this.name = name;
         this.description = description;
         this.image = image;
+        this.source = source;
     }
 
-    public Recipe(String name, String description, String image, List<Ingredient> ingredients) {
+    public Recipe(String name, String description, String image, String source, List<Ingredient> ingredients) {
         this.name = name;
         this.description = description;
         this.ingredients = ingredients;
         this.image = image;
+        this.source = source;
     }
 }

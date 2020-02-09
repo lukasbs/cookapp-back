@@ -8,11 +8,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.impl.TextCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.*;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -34,12 +34,22 @@ public class TokenAuthenticationFilter extends GenericFilterBean {
         final HttpServletRequest httpRequest = (HttpServletRequest)servletRequest;
         final HttpServletResponse httpResponse = (HttpServletResponse)servletResponse;
 
-        httpResponse.setHeader("Access-Control-Allow-Origin", "*");
+        httpResponse.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
         httpResponse.setHeader("Access-Control-Allow-Credentials", "true");
         httpResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-        httpResponse.setHeader("Access-Control-Allow-Headers","Content-Type, Authorization");
+        httpResponse.setHeader("Access-Control-Allow-Headers","Content-Type, Authorization, Set-Cookie");
+        httpResponse.setHeader("Access-Control-Expose-Headers", "Content-Type, Authorization, Set-Cookie");
 
-        final String accessToken = httpRequest.getHeader(HttpHeaders.AUTHORIZATION);
+        String accessToken = null;
+
+        Cookie[] cookies = httpRequest.getCookies();
+        if(cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (Constants.TOKEN_COOKIE_NAME.equals(cookie.getName())) {
+                    accessToken = cookie.getValue();
+                }
+            }
+        }
 
         //Check for preflight request
         if(!httpRequest.getMethod().equals(Constants.OPTIONS)){
@@ -53,11 +63,10 @@ public class TokenAuthenticationFilter extends GenericFilterBean {
                             .setSigningKey(TextCodec.BASE64.decode(environment.getProperty(Constants.SECRET_KEY_PROPERTY)))
                             .parseClaimsJws(accessToken);
                     String name = (String)claims.getBody().get(Constants.FIELD_NAME);
-                    String password = (String)claims.getBody().get(Constants.FIELD_PASSWORD);
-                    //Find user in database if provided token contains name and password
-                    if(name != null && password != null){
-                        this.user = this.userRepository.findByNameAndPassword(name, password);
-                        //Unauthorized if token does not contain name and password
+                    //Find user in database if provided token contains name
+                    if(name != null){
+                        this.user = this.userRepository.findByName(name);
+                        //Unauthorized if token does not contain name
                     } else
                         httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                     //If user was found in database

@@ -2,7 +2,9 @@ package com.lukaszbojes.cookapp.service;
 
 import com.lukaszbojes.cookapp.data.dto.UserDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface UserService {
     ResponseEntity<Object> registerUser(UserDto userDto);
     ResponseEntity<Object> loginUser(UserDto userDto);
@@ -12,4 +14,6 @@ public interface UserService {
     ResponseEntity<Object> updateUser(String name, UserDto userDto);
     ResponseEntity<Object> addUser(UserDto userDto);
     ResponseEntity<Object> loginAdminUser(UserDto userDto);
+    ResponseEntity<Object> isValid(String token);
+    ResponseEntity<Object> logout();
 }

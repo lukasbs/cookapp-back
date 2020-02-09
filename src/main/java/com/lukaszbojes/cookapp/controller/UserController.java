@@ -56,4 +56,14 @@ public class UserController {
     public ResponseEntity<Object> addUser(@RequestBody UserDto userDto) {
         return userService.addUser(userDto);
     }
+
+    @PostMapping(path = Constants.IS_VALID_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> isValid(@CookieValue(Constants.TOKEN_COOKIE_NAME) String token) {
+        return userService.isValid(token);
+    }
+
+    @PostMapping(path = Constants.LOGOUT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> logout() {
+        return userService.logout();
+    }
 }

@@ -11,16 +11,18 @@ public class RecipeDto {
     private String name;
     private String description;
     private String image;
+    private String source;
 
     private List<IngredientDto> ingredients;
 
     public RecipeDto() {
     }
 
-    public RecipeDto(String name, String description, String image, List<IngredientDto> ingredients) {
+    public RecipeDto(String name, String description, String image, String source, List<IngredientDto> ingredients) {
         this.name = name;
         this.description = description;
         this.ingredients = ingredients;
         this.image = image;
+        this.source = source;
     }
 }

@@ -27,6 +27,8 @@ public final class Constants {
     public static final String UPDATE_NAME_AMOUNT_URL = UPDATE_NAME_URL + "/{amount}";
     public static final String ADD_NAME_URL = ADD_URL + NAME_PARAM_URL;
     public static final String DELETE_NAME_URL = DELETE_URL + NAME_PARAM_URL;
+    public static final String IS_VALID_URL = AUTH_URL + "/isvalid";
+    public static final String LOGOUT_URL = AUTH_URL + "/logout";
 
     public static final String ADMIN_DELETE_URL = ADMIN_URL + DELETE_URL + NAME_PARAM_URL;
     public static final String ADMIN_GET_ALL_URL = ADMIN_URL + ALL_URL;
@@ -46,6 +48,7 @@ public final class Constants {
     public static final String USER_ADD_ERROR_ALREADY_ADDED_MESSAGE = "User already added to database!";
     public static final String USER_DELETE_ERROR_MESSAGE = "User with provided name wasn't found, cannot delete user!";
     public static final String USER_DELETE_SUCCESS_MESSAGE = "User successfully deleted!";
+    public static final String USER_LOGOUT_MESSAGE = "Logged out!";
 
     public static final String RECIPE_GET_ALL_ERROR_MESSAGE = "No recipes found!";
     public static final String RECIPE_ADD_ERROR_ALREADY_ADDED_MESSAGE = "Recipe already added to database!";
@@ -79,9 +82,14 @@ public final class Constants {
     public static final String ROLE_ADMIN = "ADMIN";
     public static final String ROLE_USER = "USER";
     public static final String FIELD_NAME = "name";
-    public static final String FIELD_PASSWORD = "password";
     public static final String SECRET_KEY_PROPERTY = "auth.secret.key";
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String ERROR_MISSING_FIELDS_MESSAGE = "Missing fields in provided request!";
     public static final String OPTIONS = "OPTIONS";
+    public static final String TOKEN_COOKIE_NAME = "token";
+    public static final String TOKEN_COOKIE_NAME_SETUP_PREFIX = "token=";
+    public static final String TOKEN_COOKIE_NAME_SETUP_SUFIX = "; Path=/; HttpOnly; expires=";
+    public static final String TOKEN_COOKIE_LOGOUT_SUFIX = "; Path=/; HttpOnly";
+
+
 }

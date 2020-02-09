@@ -18,17 +18,17 @@ public class FridgeItemController {
     }
 
     @GetMapping(path = Constants.ALL_URL , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getAllFridgeItems(@RequestHeader(Constants.AUTHORIZATION_HEADER) String token) {
+    public ResponseEntity<Object> getAllFridgeItems(@CookieValue(Constants.TOKEN_COOKIE_NAME) String token) {
         return fridgeItemService.getAllFridgeItems(token);
     }
 
     @PostMapping(path = Constants.ADD_URL , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> addFridgeItem(@RequestBody FridgeItemDto fridgeItemDto, @RequestHeader(Constants.AUTHORIZATION_HEADER) String token) {
+    public ResponseEntity<Object> addFridgeItem(@RequestBody FridgeItemDto fridgeItemDto, @CookieValue(Constants.TOKEN_COOKIE_NAME) String token) {
         return fridgeItemService.addFridgeItem(fridgeItemDto, token);
     }
 
     @DeleteMapping(path = Constants.DELETE_URL , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> deleteFridgeItem(@RequestBody FridgeItemDto fridgeItemDto, @RequestHeader(Constants.AUTHORIZATION_HEADER) String token) {
+    public ResponseEntity<Object> deleteFridgeItem(@RequestBody FridgeItemDto fridgeItemDto, @CookieValue(Constants.TOKEN_COOKIE_NAME) String token) {
         return fridgeItemService.deleteFridgeItem(fridgeItemDto, token);
     }
 }

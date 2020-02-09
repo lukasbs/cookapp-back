@@ -85,6 +85,7 @@ public class RecipeServiceImpl implements RecipeService {
             recipe.setName(recipeDto.getName());
             recipe.setDescription(recipeDto.getDescription());
             recipe.setImage(recipeDto.getImage());
+            recipe.setSource(recipeDto.getSource());
             recipe.setIngredients(Utils.mapIngredientDtosToEntities(recipeDto.getIngredients(), this.modelMapper, recipe));
 
             this.recipeRepository.save(recipe);
