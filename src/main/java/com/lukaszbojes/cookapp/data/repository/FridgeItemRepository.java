@@ -13,5 +13,6 @@ public interface FridgeItemRepository extends CrudRepository<FridgeItem, Long> {
     List<FridgeItem> findAllByUser_Name(String userName);
     List<FridgeItem> findAllByUser(User user);
     List<FridgeItem> findAllByNameAndAmountAndExpirationDateAndUser(String name, String amount, Date expirationDate, User user);
+    List<FridgeItem> findAllByNameAndExpirationDateAndUser(String name, Date expirationDate, User user);
     void deleteByFridgeID(long id);
 }

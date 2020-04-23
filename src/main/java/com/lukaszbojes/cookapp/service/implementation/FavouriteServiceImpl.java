@@ -16,6 +16,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +74,7 @@ public class FavouriteServiceImpl implements FavouriteService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<Object> deleteFavourite(String name, String token) {
         User user = Utils.getUserFromToken(token, this.environment, this.userRepository);
         Recipe recipe = this.recipeRepository.findByName(name);

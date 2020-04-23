@@ -12,5 +12,6 @@ public interface ShoppingListItemRepository extends CrudRepository<ShoppingListI
     List<ShoppingListItem> findAllByUser_Name(String userName);
     List<ShoppingListItem> findAllByUser(User user);
     List<ShoppingListItem> findAllByNameAndAmountAndUser(String name, String amount, User user);
+    List<ShoppingListItem> findAllByNameAndUser(String name, User user);
     void deleteByShoppingListID(long id);
 }

@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.impl.TextCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -30,11 +31,17 @@ public class TokenAuthenticationFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-
         final HttpServletRequest httpRequest = (HttpServletRequest)servletRequest;
         final HttpServletResponse httpResponse = (HttpServletResponse)servletResponse;
 
-        httpResponse.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+        if (Constants.ADMIN_APP_DEV_URL.equals(httpRequest.getHeader(HttpHeaders.ORIGIN))) {
+            httpResponse.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, Constants.ADMIN_APP_DEV_URL);
+        } else if (Constants.CLIENT_APP_DEV_URL.equals(httpRequest.getHeader(HttpHeaders.ORIGIN))) {
+            httpResponse.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, Constants.CLIENT_APP_DEV_URL);
+        } else {
+            httpResponse.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "**");
+        }
+
         httpResponse.setHeader("Access-Control-Allow-Credentials", "true");
         httpResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
         httpResponse.setHeader("Access-Control-Allow-Headers","Content-Type, Authorization, Set-Cookie");

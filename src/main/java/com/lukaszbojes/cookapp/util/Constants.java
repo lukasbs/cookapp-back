@@ -25,10 +25,12 @@ public final class Constants {
     public static final String EXPLICIT_SEARCH_STRING_URL = "/explicit" + SEARCH_STRING_URL;
     public static final String UPDATE_NAME_URL = UPDATE_URL + NAME_PARAM_URL;
     public static final String UPDATE_NAME_AMOUNT_URL = UPDATE_NAME_URL + "/{amount}";
+    public static final String UPDATE_NAME_AMOUNT_DATE_URL = UPDATE_NAME_AMOUNT_URL + "/{date}";
     public static final String ADD_NAME_URL = ADD_URL + NAME_PARAM_URL;
     public static final String DELETE_NAME_URL = DELETE_URL + NAME_PARAM_URL;
     public static final String IS_VALID_URL = AUTH_URL + "/isvalid";
     public static final String LOGOUT_URL = AUTH_URL + "/logout";
+    public static final String CLIENT_CHECK = AUTH_URL + "/check";
 
     public static final String ADMIN_DELETE_URL = ADMIN_URL + DELETE_URL + NAME_PARAM_URL;
     public static final String ADMIN_GET_ALL_URL = ADMIN_URL + ALL_URL;
@@ -51,7 +53,7 @@ public final class Constants {
     public static final String USER_LOGOUT_MESSAGE = "Logged out!";
 
     public static final String RECIPE_GET_ALL_ERROR_MESSAGE = "No recipes found!";
-    public static final String RECIPE_ADD_ERROR_ALREADY_ADDED_MESSAGE = "Recipe already added to database!";
+    public static final String RECIPE_ADD_ERROR_ALREADY_ADDED_MESSAGE = "Recipe with provided name already added to database!";
     public static final String RECIPE_ADD_SUCCESS_MESSAGE = "Recipe successfully added!";
     public static final String RECIPE_DELETE_SUCCESS_MESSAGE = "Recipe successfully deleted!";
     public static final String RECIPE_DELETE_ERROR_MESSAGE = "Recipe with provided name wasn't found, cannot delete recipe!";
@@ -63,7 +65,9 @@ public final class Constants {
 
     public static final String FRIDGE_GET_ALL_ERROR_MESSAGE = "No fridge items found!";
     public static final String FRIDGE_ADD_SUCCESS_MESSAGE = "Fridge item successfully added!";
-    public static final String FRIDGE_DELETE_SUCCESS_MESSAGE = "Fridge item successfully deleted!";
+    public static final String FRIDGE_UPDATE_SUCCESS_MESSAGE = "Fridge item successfully updated!";
+    public static final String FRIDGE_UPDATE_ERROR_MESSAGE = "Fridge item successfully updated!";
+    public static final String FRIDGE_DELETE_SUCCESS_MESSAGE = "Fridge item with provided info wasn't found, cannot update item!";
     public static final String FRIDGE_DELETE_ERROR_MESSAGE = "Fridge item with provided info wasn't found, cannot delete item!";
 
     public static final String SHOPPING_GET_ALL_ERROR_MESSAGE = "No shopping list items found!";
@@ -79,6 +83,9 @@ public final class Constants {
     public static final String FAVOURITE_DELETE_SUCCESS_MESSAGE = "Favourite recipe successfully deleted!";
     public static final String FAVOURITE_DELETE_ERROR_MESSAGE = "Favourite recipe with provided info wasn't found, cannot delete!";
 
+    public static final String CLIENT_UNAVAILABLE_ERROR_MESSAGE = "Client unavailable!";
+    public static final String CLIENT_AVAILABLE_ERROR_MESSAGE = "Client available!";
+
     public static final String ROLE_ADMIN = "ADMIN";
     public static final String ROLE_USER = "USER";
     public static final String FIELD_NAME = "name";
@@ -90,6 +97,9 @@ public final class Constants {
     public static final String TOKEN_COOKIE_NAME_SETUP_PREFIX = "token=";
     public static final String TOKEN_COOKIE_NAME_SETUP_SUFIX = "; Path=/; HttpOnly; expires=";
     public static final String TOKEN_COOKIE_LOGOUT_SUFIX = "; Path=/; HttpOnly";
+
+    public static final String CLIENT_APP_DEV_URL = "http://localhost:4300";
+    public static final String ADMIN_APP_DEV_URL = "http://localhost:4200";
 
 
 }

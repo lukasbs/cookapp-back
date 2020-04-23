@@ -79,6 +79,9 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional
     public ResponseEntity<Object> updateRecipe(String name, RecipeDto recipeDto) {
+        if(this.recipeRepository.findByName(recipeDto.getName()) != null) {
+            return new ResponseEntity<>(new MessageDto(Constants.RECIPE_ADD_ERROR_ALREADY_ADDED_MESSAGE), HttpStatus.CONFLICT);
+        }
         Recipe recipe = this.recipeRepository.findByName(name);
         if(recipe != null) {
             this.ingredientRepository.deleteByRecipe(recipe);
@@ -112,50 +115,24 @@ public class RecipeServiceImpl implements RecipeService {
                 new ResponseEntity<>(new MessageDto(Constants.RECIPE_GET_DAILY_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
     }
 
-    //Need refactor
     @Override
     public ResponseEntity<Object> getAllRecipesByNameOrIngredientsExplicit(String searchString) {
         if(searchString != null){
             Set<Recipe> resultRecipes = new HashSet<>();
             String[] words = searchString.split(",");
 
-//            Set<Recipe> byNameRecipes = new HashSet<>();
-//            Set<Recipe> byIngredientRecipes = new HashSet<>();
-//
-//            for(String word: words){
-//                List<Ingredient> foundIngredients = this.ingredientRepository.findAllByNameIgnoreCaseIsContaining(word.trim().toLowerCase());
-//                for(Ingredient ingredient: foundIngredients) {
-//                    byIngredientRecipes.add(ingredient.getRecipe());
-//                }
-//            }
-//
-//            for(String word: words){
-//                List<Recipe> recipes = this.recipeRepository.findAllByNameIgnoreCaseIsContaining(word.trim().toLowerCase());
-//                byNameRecipes.addAll(recipes);
-//            }
-
             if(words.length > 1) {
-                return new ResponseEntity<>(new MessageDto(Constants.RECIPE_GET_INGREDIENT_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
-//                for(Recipe recipeN: byNameRecipes){
-//                    for(Recipe recipeI: byIngredientRecipes){
-//                        if(recipeN.getRecipeID() == recipeI.getRecipeID())
-//                            resultRecipes.add(recipeN);
-//                    }
-//                }
-            } else if(words.length == 1){
-                resultRecipes = getRecipes(words);
-                if(resultRecipes.size() > 0){
-                    return new ResponseEntity<>(Utils.mapRecipeEntitiesToDtos(resultRecipes, this.modelMapper), HttpStatus.OK);
-                } else {
-                    return new ResponseEntity<>(new MessageDto(Constants.RECIPE_GET_INGREDIENT_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
-                }
+                resultRecipes = this.getExplicitRecipes(words);
             } else {
-                return new ResponseEntity<>(new MessageDto(Constants.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
+                resultRecipes = this.getRecipes(words);
             }
+
+            return resultRecipes.size() > 0 ? new ResponseEntity<>(Utils.mapRecipeEntitiesToDtos(resultRecipes, this.modelMapper), HttpStatus.OK) :
+                    new ResponseEntity<>(new MessageDto(Constants.RECIPE_GET_INGREDIENT_ERROR_MESSAGE), HttpStatus.NO_CONTENT);
+
         } else {
             return new ResponseEntity<>(new MessageDto(Constants.ERROR_MISSING_FIELDS_MESSAGE), HttpStatus.BAD_REQUEST);
         }
-
     }
 
     private Set<Recipe> getRecipes(String[] words){
@@ -173,6 +150,25 @@ public class RecipeServiceImpl implements RecipeService {
         return resultRecipes;
     }
 
+    private Set<Recipe> getExplicitRecipes(String[] words){
+        Set<Recipe> resultRecipes = new HashSet<>();
+
+        for(String word: words) {
+            List<Ingredient> foundIngredients = this.ingredientRepository.findAllByNameIgnoreCaseIsContaining(word.trim().toLowerCase());
+            for(Ingredient ingredient: foundIngredients) {
+                resultRecipes.add(ingredient.getRecipe());
+            }
+        }
+
+        Set<Recipe> copyRecipes = new HashSet<>(resultRecipes);
+        for(Recipe recipe: resultRecipes) {
+            for(String word: words) {
+                if(!this.isWordInIngredientsNames(recipe.getIngredients(), word.trim().toLowerCase())) copyRecipes.remove(recipe);
+            }
+        }
+        return copyRecipes;
+    }
+
     private RecipeDto findDaily() {
         List<Recipe> recipes = (List<Recipe>) this.recipeRepository.findAll();
         if(recipes.size() > 0) {
@@ -183,5 +179,12 @@ public class RecipeServiceImpl implements RecipeService {
         } else {
             return null;
         }
+    }
+
+    private boolean isWordInIngredientsNames(List<Ingredient> ingredientList, String word) {
+        for(Ingredient ingredient: ingredientList) {
+            if(ingredient.getName().toLowerCase().contains(word)) return true;
+        }
+        return false;
     }
 }

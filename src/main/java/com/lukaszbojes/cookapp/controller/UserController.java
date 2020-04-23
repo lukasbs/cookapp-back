@@ -3,6 +3,7 @@ package com.lukaszbojes.cookapp.controller;
 import com.lukaszbojes.cookapp.data.dto.UserDto;
 import com.lukaszbojes.cookapp.service.UserService;
 import com.lukaszbojes.cookapp.util.Constants;
+import com.lukaszbojes.cookapp.util.Utils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -65,5 +66,10 @@ public class UserController {
     @PostMapping(path = Constants.LOGOUT_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> logout() {
         return userService.logout();
+    }
+
+    @PostMapping(path = Constants.CLIENT_CHECK, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> checkClient() {
+        return Utils.checkClient();
     }
 }

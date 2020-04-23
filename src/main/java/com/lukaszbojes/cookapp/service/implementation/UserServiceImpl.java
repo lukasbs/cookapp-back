@@ -148,6 +148,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<Object> updateUser(String name, UserDto userDto) {
+        if(this.userRepository.findByName(userDto.getName()) != null) {
+            return new ResponseEntity<>(new MessageDto(Constants.USER_ADD_ERROR_ALREADY_ADDED_MESSAGE), HttpStatus.CONFLICT);
+        }
         User user = this.userRepository.findByName(name);
         if(user != null) {
             user.setName(userDto.getName());

@@ -9,7 +9,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.impl.TextCodec;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
+import java.net.URL;
 import java.util.ArrayList;
 
 public class Utils {
@@ -67,5 +70,39 @@ public class Utils {
             return null;
         }
         return userRepository.findByName((String)claims.getBody().get(Constants.FIELD_NAME));
+    }
+
+    public static boolean isSameUnit(String firstAmount, String secondAmount) {
+        try {
+            return firstAmount.split(" ")[1].toLowerCase().trim().equals(secondAmount.split(" ")[1].toLowerCase().trim());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static String addAmounts(String firstAmount, String secondAmount) {
+        try {
+            int firstQuantity = Integer.parseInt(firstAmount.split(" ")[0].toLowerCase().trim());
+            int secondQuantity = Integer.parseInt(secondAmount.split(" ")[0].toLowerCase().trim());
+            String unit = firstAmount.split(" ")[1].toLowerCase().trim();
+            return (firstQuantity + secondQuantity) + " " + unit;
+        } catch(Exception e) {
+            return secondAmount;
+        }
+    }
+
+    public static ResponseEntity<Object> checkClient() {
+        boolean result = false;
+        try {
+            URL url = new URL("http://localhost:4300");
+            url.openStream();
+            result = true;
+        } catch (Exception e) {}
+
+        if(result) {
+            return new ResponseEntity<>(new MessageDto(Constants.CLIENT_AVAILABLE_ERROR_MESSAGE), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new MessageDto(Constants.CLIENT_UNAVAILABLE_ERROR_MESSAGE), HttpStatus.NOT_FOUND);
+        }
     }
 }
