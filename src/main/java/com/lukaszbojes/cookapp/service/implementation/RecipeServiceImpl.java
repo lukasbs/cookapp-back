@@ -79,7 +79,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional
     public ResponseEntity<Object> updateRecipe(String name, RecipeDto recipeDto) {
-        if(this.recipeRepository.findByName(recipeDto.getName()) != null) {
+        if(this.recipeRepository.findByName(recipeDto.getName()) != null && !recipeDto.getName().equals(name)) {
             return new ResponseEntity<>(new MessageDto(Constants.RECIPE_ADD_ERROR_ALREADY_ADDED_MESSAGE), HttpStatus.CONFLICT);
         }
         Recipe recipe = this.recipeRepository.findByName(name);
